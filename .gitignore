@@ -1,2 +1,5 @@
 data.tar
 data
+
+*.qcow2
+build
