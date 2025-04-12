@@ -45,6 +45,7 @@ OPT_ARCH="aarch64"
 QEMU_M="1G"
 QEMU_SMP="1"
 OPT_GUI=false
+OPT_VGA=false
 
 while [ "$#" -ne 0 ] ; do
 	case $1 in
@@ -74,6 +75,9 @@ while [ "$#" -ne 0 ] ; do
 			;;
 		"--gui")
 			OPT_GUI=true
+			;;
+		"--vga")
+			OPT_VGA=true
 			;;
 		"--mac")
 			OPT_MAC=$(expect_value "$@")
@@ -155,14 +159,20 @@ fi
 
 if [ "$OPT_GUI" = true ]; then
 	QEMU_COMMAND+=(
+		-nodefaults
 		-device "nec-usb-xhci,id=usb-bus"
 		-device "usb-tablet,bus=usb-bus.0"
 		-device "usb-mouse,bus=usb-bus.0"
 		-device "usb-kbd,bus=usb-bus.0"
 		-device "virtio-gpu-pci"
 	)
+elif [ "$OPT_VGA" = true ]; then
+	QEMU_COMMAND+=(
+		-vga "std"
+	)
 else
 	QEMU_COMMAND+=(
+		-nodefaults
 		-nographic
 	)
 fi
