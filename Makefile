@@ -47,3 +47,13 @@ kali.qcow2: data/kali-arm64.iso data/edk2-aarch64-code.fd kali_efivars.fd
 backup-kali: kali.qcow2 kali_efivars.fd
 	zip backup.zip kali.qcow2 kali_efivars.fd
 .PHONY: backup-kali
+
+## Run kali image
+run-kali:
+	@./qemu.sh --img kali.qcow2 \
+		--qemu-m 8G --qemu-smp 8 \
+		--firmware data/edk2-aarch64-code.fd \
+		--efivars kali_efivars.fd \
+		--mac 12:3:45:67:89:1 \
+		--serial 4444
+.PHONY: run-kali
