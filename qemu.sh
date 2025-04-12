@@ -44,6 +44,7 @@ print_command() {
 OPT_ARCH="aarch64"
 QEMU_M="1G"
 QEMU_SMP="1"
+OPT_GUI=false
 
 while [ "$#" -ne 0 ] ; do
 	case $1 in
@@ -71,6 +72,9 @@ while [ "$#" -ne 0 ] ; do
 			OPT_SERIAL=$(expect_value "$@")
 			shift
 			;;
+		"--gui")
+			OPT_GUI=true
+			;;
 		"--mac")
 			OPT_MAC=$(expect_value "$@")
 			shift
@@ -93,11 +97,6 @@ expect_value "--img" "$OPT_IMG" >/dev/null
 expect_value "--mac" "$OPT_MAC" >/dev/null
 expect_value "--qemu-m" "$QEMU_M" >/dev/null
 expect_value "--qemu-smp" "$QEMU_SMP" >/dev/null
-
-case "$OPT_ARCH" in
-	aarch64|x86_64) ;;
-	*) fail "unsupported arch: $OPT_ARCH"
-esac
 
 if [ "$OPT_ARCH" = "aarch64" ]; then
 	expect_value "--efivars" "$OPT_EFIVARS" >/dev/null
@@ -124,6 +123,7 @@ case "$OPT_ARCH" in
 			-cpu max
 		)
 		;;
+	*) fail "unsupported arch: $OPT_ARCH"
 esac
 
 QEMU_COMMAND+=(
@@ -131,6 +131,7 @@ QEMU_COMMAND+=(
 	-m "$QEMU_M"
 	-smp "$QEMU_SMP"
 	-nic "vmnet-bridged,ifname=en0,mac=$OPT_MAC"
+	-nodefaults
 )
 
 if [ -n "$OPT_CDROOM" ]; then
@@ -152,9 +153,20 @@ if [ -n "$OPT_SERIAL" ]; then
 	)
 fi
 
-QEMU_COMMAND+=(
-	-nodefaults -nographic
-)
+if [ "$OPT_GUI" = true ]; then
+	QEMU_COMMAND+=(
+		-device "nec-usb-xhci,id=usb-bus"
+		-device "usb-tablet,bus=usb-bus.0"
+		-device "usb-mouse,bus=usb-bus.0"
+		-device "usb-kbd,bus=usb-bus.0"
+		-device "virtio-gpu-pci"
+	)
+else
+	QEMU_COMMAND+=(
+		-nographic
+	)
+fi
+
 
 print_command "${QEMU_COMMAND[@]}" 
 sudo "${QEMU_COMMAND[@]}"
