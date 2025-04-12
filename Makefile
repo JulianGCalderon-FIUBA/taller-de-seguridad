@@ -57,3 +57,11 @@ run-kali:
 		--mac 12:3:45:67:89:1 \
 		--serial 4444
 .PHONY: run-kali
+
+## Run owned image
+run-owned: owned.qcow2
+	@./qemu.sh --img owned.qcow2 \
+		--arch x86_64 \
+		--qemu-m 1G --qemu-smp 1 \
+		--mac 12:3:45:67:89:2
+.PHONY: run-owned
