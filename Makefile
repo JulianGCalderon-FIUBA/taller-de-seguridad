@@ -61,12 +61,22 @@ run-kali:
 ## Connect to serial port
 serial:
 	socat -,rawer tcp:localhost:4444,forever
+.PHONY: serial
+
+## SSH into kali VM
+ssh-kali:
+	./ssh.sh kali
+.PHONY: ssh-kali
 
 ## Run owned image
 run-owned: owned.qcow2
 	@./qemu.sh --img owned.qcow2 \
 		--arch x86_64 \
 		--qemu-m 1G --qemu-smp 1 \
-		--mac 12:3:45:67:89:2 \
-		--vga
+		--mac 12:3:45:67:89:2
 .PHONY: run-owned
+
+## SSH into owned VM
+ssh-owned:
+	./ssh.sh owned
+.PHONY: ssh-owned
