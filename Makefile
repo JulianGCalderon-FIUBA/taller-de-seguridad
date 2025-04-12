@@ -26,3 +26,19 @@ build/kali-x86-disk001.vmdk: build data/kali-x86.ova
 ## Extract kali-x86.qcow2
 kali-x86.qcow2: build/kali-x86-disk001.vmdk
 	qemu-img convert -f vmdk -O qcow2 build/kali-x86-disk001.vmdk kali-x86.qcow2
+
+kali_efivars.fd:
+	dd "of=$@" if=/dev/zero bs=1M count=64 >/dev/null 2>&1
+.PRECIOUS: kali_efivars.fd
+
+## Generate kali.qcow2 (aarch64)
+kali.qcow2: data/kali-arm64.iso data/edk2-aarch64-code.fd kali_efivars.fd
+	qemu-img create $@ 30G -f qcow2
+	@./qemu.sh --img $@ \
+		--qemu-m 8G --qemu-smp 8 \
+		--cdroom data/kali-arm64.iso \
+		--firmware data/edk2-aarch64-code.fd \
+		--efivars kali_efivars.fd \
+		--mac 12:3:45:67:89:1 \
+		--serial 4444
+.PRECIOUS: kali.qcow2
