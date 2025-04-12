@@ -3,3 +3,4 @@ data
 
 *.qcow2
 build
+*efivars.fd
