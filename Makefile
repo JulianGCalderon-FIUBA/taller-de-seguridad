@@ -42,3 +42,8 @@ kali.qcow2: data/kali-arm64.iso data/edk2-aarch64-code.fd kali_efivars.fd
 		--mac 12:3:45:67:89:1 \
 		--serial 4444
 .PRECIOUS: kali.qcow2
+
+## Backup kali image
+backup-kali: kali.qcow2 kali_efivars.fd
+	zip backup.zip kali.qcow2 kali_efivars.fd
+.PHONY: backup-kali
