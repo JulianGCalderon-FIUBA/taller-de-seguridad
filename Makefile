@@ -58,6 +58,10 @@ run-kali:
 		--serial 4444
 .PHONY: run-kali
 
+## Connect to serial port
+serial:
+	socat -,rawer tcp:localhost:4444,forever
+
 ## Run owned image
 run-owned: owned.qcow2
 	@./qemu.sh --img owned.qcow2 \
