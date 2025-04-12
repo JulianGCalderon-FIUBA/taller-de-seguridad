@@ -1,5 +1,4 @@
 #!/bin/bash
-# shellcheck disable=SC2086,SC2206,SC2054
 
 set -e
 
@@ -7,6 +6,19 @@ set -e
 #####################
 # utility functions #
 #####################
+
+fail() {
+	echo "$*" >&2
+	exit 1
+}
+
+expect_value() {
+	if [ -z "$2" ]; then
+		fail "missing value for $1"
+	else
+		echo "$2"
+	fi
+}
 
 print_command() {
 	echo "$1"
@@ -18,7 +30,7 @@ print_command() {
 			fi
 			partial=()
 		esac
-		partial+=($argument)
+		partial+=("$argument")
 	done
 	if [ ${#partial[@]} -ne 0 ]; then
 		printf "  %s\n" "${partial[*]}"
@@ -29,20 +41,16 @@ print_command() {
 # parse command line arguments #
 ################################
 
-expect_value() {
-	if [ -z "$2" ]; then
-		echo "missing value for $1" >&2
-		exit 1
-	else
-		echo "$2"
-	fi
-}
-
+OPT_ARCH="aarch64"
 QEMU_M="1G"
 QEMU_SMP="1"
 
 while [ "$#" -ne 0 ] ; do
 	case $1 in
+		"--arch")
+			OPT_ARCH=$(expect_value "$@")
+			shift
+			;;
 		"--img")
 			OPT_IMG=$(expect_value "$@")
 			shift
@@ -80,45 +88,67 @@ while [ "$#" -ne 0 ] ; do
 	shift
 done
 
+expect_value "--arch" "$OPT_ARCH" >/dev/null
 expect_value "--img" "$OPT_IMG" >/dev/null
 expect_value "--mac" "$OPT_MAC" >/dev/null
 expect_value "--qemu-m" "$QEMU_M" >/dev/null
 expect_value "--qemu-smp" "$QEMU_SMP" >/dev/null
-expect_value "--efivars" "$OPT_EFIVARS" >/dev/null
-expect_value "--firmware" "$OPT_FIRMWARE" >/dev/null
+
+case "$OPT_ARCH" in
+	aarch64|x86_64) ;;
+	*) fail "unsupported arch: $OPT_ARCH"
+esac
+
+if [ "$OPT_ARCH" = "aarch64" ]; then
+	expect_value "--efivars" "$OPT_EFIVARS" >/dev/null
+	expect_value "--firmware" "$OPT_FIRMWARE" >/dev/null
+fi
 
 
 ##########################
 # prepare qemu arguments #
 ##########################
 
-QEMU_COMMAND=(
-	qemu-system-aarch64
-	-hda $OPT_IMG
-	-machine virt
-	-accel hvf
-	-cpu max
+case "$OPT_ARCH" in
+	aarch64)
+		QEMU_COMMAND=(
+			qemu-system-aarch64
+			-machine virt
+			-accel hvf
+			-cpu max
+		)
+		;;
+	x86_64)
+		QEMU_COMMAND=(
+			qemu-system-x86_64
+			-cpu max
+		)
+		;;
+esac
+
+QEMU_COMMAND+=(
+	-hda "$OPT_IMG"
 	-m "$QEMU_M"
 	-smp "$QEMU_SMP"
-	-nic vmnet-bridged,ifname=en0,mac=$OPT_MAC
+	-nic "vmnet-bridged,ifname=en0,mac=$OPT_MAC"
 )
 
 if [ -n "$OPT_CDROOM" ]; then
 	QEMU_COMMAND+=(
-		-boot d -cdrom $OPT_CDROOM
+		-boot d -cdrom "$OPT_CDROOM"
 	)
 fi
 
 if [ -n "$OPT_EFIVARS" ]; then
 	QEMU_COMMAND+=(
-		-drive if=pflash,format=raw,unit=0,file=$OPT_FIRMWARE
-		-drive if=pflash,format=raw,unit=1,file=$OPT_EFIVARS
+		-drive "if=pflash,format=raw,unit=0,file=$OPT_FIRMWARE"
+		-drive "if=pflash,format=raw,unit=1,file=$OPT_EFIVARS"
 	)
 fi
 
 if [ -n "$OPT_SERIAL" ]; then
 	QEMU_COMMAND+=(
-		-serial tcp::$OPT_SERIAL,server,nowait \
+		-serial "tcp::$OPT_SERIAL,server,nowait"
 	)
 fi
 
