@@ -6,6 +6,10 @@ usage:
 data:
 	tar -xf data.tar
 
+data/%:
+	@echo "missing: $@"
+	@exit 1
+
 build:
 	@mkdir -p $@
 
