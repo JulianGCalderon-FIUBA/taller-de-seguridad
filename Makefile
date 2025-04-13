@@ -43,6 +43,15 @@ run-owned: owned.qcow2
 		--mac 12:3:45:67:89:2
 .PHONY: run-owned
 
+## Run metasploitable image
+run-metasploitable: metasploitable.qcow2
+	@./qemu.sh --img metasploitable.qcow2 \
+		--arch x86_64 \
+		--qemu-m 1G --qemu-smp 1 \
+		--mac 12:3:45:67:89:3 \
+		--vga
+.PHONY: run-owned
+
 ## Connect to serial port
 serial:
 	socat -,rawer tcp:localhost:4444,forever
@@ -68,6 +77,5 @@ build/kali-x86-disk001.vmdk: build data/kali-x86.ova
 owned.qcow2: build/owned.vdi
 	qemu-img convert -f vdi -O qcow2 build/owned.vdi owned.qcow2
 
-## Extract kali-x86.qcow2
-kali-x86.qcow2: build/kali-x86-disk001.vmdk
-	qemu-img convert -f vmdk -O qcow2 build/kali-x86-disk001.vmdk kali-x86.qcow2
+metasploitable.qcow2: data/metasploitable.vmdk
+	qemu-img convert -f vmdk -O qcow2 data/metasploitable.vmdk metasploitable.qcow2

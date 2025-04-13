@@ -65,6 +65,20 @@ Y en otra terminal:
 ./ssh.sh kali
 ```
 
+### Levantar Metasploitable
+
+Para levantar `metasploitable`:
+
+```bash
+make run-metasploitable
+```
+
+Y en otra terminal:
+
+```bash
+./ssh.sh metasploitable
+```
+
 ## Uso Avanzado
 
 Para mas control, se puede llamar a `qemu.sh` y `ssh.sh`, o invocar QEMU directamente.
