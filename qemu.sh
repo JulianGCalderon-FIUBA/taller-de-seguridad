@@ -135,7 +135,6 @@ QEMU_COMMAND+=(
 	-m "$QEMU_M"
 	-smp "$QEMU_SMP"
 	-nic "vmnet-bridged,ifname=en0,mac=$OPT_MAC"
-	-nodefaults
 )
 
 if [ -n "$OPT_CDROOM" ]; then
