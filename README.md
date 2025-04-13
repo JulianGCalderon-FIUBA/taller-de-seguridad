@@ -10,8 +10,8 @@ Para funcionar, requiere una carpeta `data` con los siguientes archivos:
 
 - `data/edk2-aarch64-code.fd`: UEFI Firmware para aarch64. Está incluido en la instalación de QEMU de Macos.
 - `data/kali-arm64.iso`: Disco de instalación de Kali para arm64.
-- `data/kali-x86.ova`: Provisto por la catedra.
 - `data/owned.zip`: Provisto por la catedra.
+- `data/metasploitable.vmdk`: Provisto por la catedra.
 
 ## Uso
 
