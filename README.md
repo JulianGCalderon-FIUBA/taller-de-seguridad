@@ -32,7 +32,7 @@ make run-owned
 Y en otra terminal:
 
 ```bash
-make ssh-owned
+./ssh.sh owned
 ```
 
 ### Instalar Kali
@@ -40,7 +40,7 @@ make ssh-owned
 Para levantar `kali` nativo, primero hay que instalarlo.
 
 ```bash
-make kali.qcow2
+make generate-kali
 ```
 
 Y en otra terminal:
@@ -48,6 +48,8 @@ Y en otra terminal:
 ```bash
 make serial
 ```
+
+Asegurarse de editar el archivo `.env` para que tenga el username de Kali correcto.
 
 ### Levantar Kali
 
@@ -60,7 +62,7 @@ make run-kali
 Y en otra terminal:
 
 ```bash
-make ssh-kali
+./ssh.sh kali
 ```
 
 ## Uso Avanzado
