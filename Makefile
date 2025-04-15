@@ -30,7 +30,7 @@ run-kali:
 	@./qemu.sh --img kali.qcow2 \
 		--qemu-m 8G --qemu-smp 8 \
 		--firmware data/edk2-aarch64-code.fd \
-		--efivars kali_efivars.fd \
+		--efivars kali-efivars.fd \
 		--mac 12:3:45:67:89:1 \
 		--serial 4444
 .PHONY: run-kali
