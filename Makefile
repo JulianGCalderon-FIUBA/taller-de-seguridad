@@ -32,7 +32,8 @@ run-kali:
 		--firmware data/edk2-aarch64-code.fd \
 		--efivars kali-efivars.fd \
 		--mac 12:3:45:67:89:1 \
-		--serial 4444
+		--serial 4444 \
+		--gui
 .PHONY: run-kali
 
 ## Run owned image
