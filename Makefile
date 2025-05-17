@@ -67,6 +67,10 @@ serial:
 	socat -,rawer tcp:localhost:4444,forever
 .PHONY: serial
 
+scan-ips:
+	nmap -sn 192.168.0.0/24
+.PHONY: scan-ips
+
 #################
 # INTERMEDIATES #
 #################
