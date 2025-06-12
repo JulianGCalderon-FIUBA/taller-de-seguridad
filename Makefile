@@ -54,6 +54,7 @@ run-metasploitable: metasploitable.qcow2
 		--vga
 .PHONY: run-owned
 
+## Run xyz image
 run-xyz: xyz.qcow2
 	@./qemu.sh --img xyz.qcow2 \
 		--arch x86_64 \
@@ -67,6 +68,7 @@ serial:
 	socat -,rawer tcp:localhost:4444,forever
 .PHONY: serial
 
+## Scan IPs in the local network
 scan-ips:
 	nmap -sn 192.168.0.0/24
 .PHONY: scan-ips
